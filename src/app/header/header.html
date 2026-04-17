@@ -1,11 +1,17 @@
-<mat-toolbar color="primary" container-background-color="red">
+<mat-toolbar color="primary">
 
   <span>Restataurante</span>
 
   <span class="spacer"></span>
 
-  <button mat-icon-button>
-    <mat-icon>shopping_cart</mat-icon>
+  <button mat-icon-button class="cart-btn">
+    <mat-icon
+      [matBadge]="totalItems() > 0 ? totalItems() : null"
+      matBadgeColor="warn"
+      matBadgeSize="small"
+      [matBadgeHidden]="totalItems() === 0">
+      shopping_cart
+    </mat-icon>
   </button>
 
 </mat-toolbar>

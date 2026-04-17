@@ -1,31 +1,62 @@
-    <mat-card class="example-card" appearance="outlined">
+<mat-card class="food-card" appearance="outlined">
 
-      <mat-card-header>
-        <div mat-card-avatar class="example-header-image"></div>
-        <mat-card-title>{{ name() }}</mat-card-title>
-        <mat-card-subtitle>R$ {{ price() | number:'1.2-2' }}</mat-card-subtitle>
-      </mat-card-header>
+  <!-- Imagem quadrada fixa -->
+  <div class="card-image-wrapper">
+    @if (!imageError()) {
+      <img
+        class="card-image"
+        [src]="imageUrl()"
+        [alt]="name()"
+        (error)="imageError.set(true)" />
+    } @else {
+      <div class="card-image-placeholder" [attr.aria-label]="'Imagem indisponível para ' + name()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="placeholder-svg">
+          <ellipse cx="50" cy="58" rx="32" ry="8" fill="none" stroke="currentColor" stroke-width="3"/>
+          <ellipse cx="50" cy="52" rx="32" ry="8" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M18 52 Q18 30 50 30 Q82 30 82 52" fill="none" stroke="currentColor" stroke-width="3"/>
+          <line x1="22" y1="20" x2="22" y2="45" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="19" y1="20" x2="19" y2="30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="20" x2="22" y2="30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="25" y1="20" x2="25" y2="30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M19 30 Q22 34 25 30" fill="none" stroke="currentColor" stroke-width="2"/>
+          <line x1="78" y1="20" x2="78" y2="45" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M78 20 Q85 25 82 35 L78 35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="placeholder-label">Imagem indisponível</span>
+      </div>
+    }
+  </div>
 
-      <img mat-card-image [src]="imageUrl()" [alt]="name()">
+  <!-- Corpo -->
+  <div class="card-body">
+    <p class="card-title">{{ name() }}</p>
+    <p class="card-description">{{ description() }}</p>
+  </div>
 
-      <mat-card-content>
-        <p>{{ description() }}</p>
-      </mat-card-content>
+  <!-- Rodapé: preço + controles de quantidade -->
+  <div class="card-footer">
+    <span class="card-price">R$ {{ price() | number:'1.2-2' }}</span>
 
-      <mat-card-actions class="card-actions">
-        <button mat-button (click)="add()">ADICIONAR</button>
+    <div class="qty-controls">
+      <button
+        mat-icon-button
+        class="qty-btn qty-btn--minus"
+        [disabled]="quantity() === 0"
+        (click)="remove()"
+        aria-label="Remover">
+        <mat-icon>remove</mat-icon>
+      </button>
 
-        <span class="quantity-badge" [class.visible]="quantity() > 0">
-          {{ quantity() }}
-        </span>
+      <span class="qty-value">{{ quantity() }}</span>
 
-        <button
-          mat-button
-          class="remove-btn"
-          [disabled]="quantity() === 0"
-          (click)="remove()">
-          REMOVER
-        </button>
-      </mat-card-actions>
+      <button
+        mat-icon-button
+        class="qty-btn qty-btn--plus"
+        (click)="add()"
+        aria-label="Adicionar">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
 
-    </mat-card>
+</mat-card>

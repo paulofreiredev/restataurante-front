@@ -1,10 +1,15 @@
 <app-header></app-header>
+
 <div class="menu-grid">
-
-  @for (n of [1,2,3,4,5,6,7,8,9,10]; track n) {
-    <app-food-card></app-food-card>
+  @for (product of products; track product.id) {
+    <app-food-card
+      [id]="product.id"
+      [name]="product.name"
+      [description]="product.description"
+      [price]="product.price"
+      [imageUrl]="product.imageUrl">
+    </app-food-card>
   }
-
 </div>
 
 <button mat-fab extended color="primary" class="fab-concluir" routerLink="/client/checkout">
