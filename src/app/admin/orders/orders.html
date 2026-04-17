@@ -6,23 +6,27 @@
   <div class="page-heading">
     <div>
       <h1 class="page-title">Pedidos</h1>
-      <p class="page-sub">{{ totalOrders() }} pedidos — {{ pendingOrders() }} em aberto</p>
+      <p class="page-sub">
+        {{ totalOrders() }} pedidos no total —
+        {{ activeOrders() }} em aberto
+        @if (cancelledCount() > 0) {
+          — <span class="cancelled-hint">{{ cancelledCount() }} cancelado(s)</span>
+        }
+      </p>
     </div>
   </div>
 
-  <!-- Kanban board -->
+  <!-- Kanban board (4 colunas ativas) -->
   <div class="kanban-board">
     @for (col of columns; track col.status) {
-      <div class="kanban-col" [class]="'kanban-col ' + col.color">
+      <div class="kanban-col {{ col.colorClass }}">
 
-        <!-- Column header -->
         <div class="col-header">
           <mat-icon class="col-icon">{{ col.icon }}</mat-icon>
           <span class="col-label">{{ col.label }}</span>
           <span class="col-count">{{ byStatus()[col.status].length }}</span>
         </div>
 
-        <!-- Order cards -->
         <div class="col-cards">
           @for (order of byStatus()[col.status]; track order.id) {
             <div class="order-card">
@@ -33,14 +37,13 @@
               </div>
 
               <div class="card-items">
-                <mat-icon class="items-icon">restaurant</mat-icon>
+                <mat-icon class="meta-icon">restaurant</mat-icon>
                 <span>{{ itemsSummary(order) }}</span>
               </div>
 
               <div class="card-address">
-                <mat-icon class="addr-icon">location_on</mat-icon>
-                <span>{{ order.address.street }}, {{ order.address.number }}
-                  — {{ order.address.neighborhood }}</span>
+                <mat-icon class="meta-icon">location_on</mat-icon>
+                <span>{{ order.address.street }}, {{ order.address.number }} — {{ order.address.neighborhood }}</span>
               </div>
 
               <div class="card-footer">
@@ -49,16 +52,24 @@
                   <span class="card-payment">{{ paymentLabel(order.paymentMethod) }}</span>
                 </div>
 
-                @if (col.nextLabel) {
-                  <button mat-flat-button class="advance-btn" (click)="advance(order)">
-                    <mat-icon>{{ col.nextIcon }}</mat-icon>
-                    {{ col.nextLabel }}
-                  </button>
-                } @else {
-                  <span class="delivered-badge">
-                    <mat-icon>check_circle</mat-icon> Entregue
-                  </span>
-                }
+                <div class="card-actions">
+                  @if (canCancel(order)) {
+                    <button mat-stroked-button class="btn-cancel" (click)="confirmCancel(order)" title="Cancelar pedido">
+                      <mat-icon>cancel</mat-icon>
+                      Cancelar
+                    </button>
+                  }
+                  @if (col.nextLabel) {
+                    <button mat-flat-button class="btn-advance" (click)="confirmAdvance(order, col)">
+                      <mat-icon>{{ col.nextIcon }}</mat-icon>
+                      {{ col.nextLabel }}
+                    </button>
+                  } @else {
+                    <span class="badge-final">
+                      <mat-icon>verified</mat-icon> Concluído
+                    </span>
+                  }
+                </div>
               </div>
 
             </div>
@@ -73,5 +84,26 @@
       </div>
     }
   </div>
+
+  <!-- Seção de Cancelados -->
+  @if (byStatus().cancelled.length > 0) {
+    <section class="cancelled-section">
+      <h2 class="cancelled-title">
+        <mat-icon>cancel</mat-icon>
+        Pedidos Cancelados ({{ byStatus().cancelled.length }})
+      </h2>
+      <div class="cancelled-list">
+        @for (order of byStatus().cancelled; track order.id) {
+          <div class="cancelled-card">
+            <span class="order-id">{{ order.id }}</span>
+            <span class="cancelled-items">{{ itemsSummary(order) }}</span>
+            <span class="cancelled-address">{{ order.address.street }}, {{ order.address.number }} — {{ order.address.neighborhood }}</span>
+            <span class="card-total">{{ order.total | currency:'BRL':'symbol':'1.2-2' }}</span>
+            <span class="order-time">{{ order.placedAt | date:'dd/MM HH:mm' }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  }
 
 </div>

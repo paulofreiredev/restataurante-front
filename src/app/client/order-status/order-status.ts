@@ -37,27 +37,13 @@ export class OrderStatus implements OnInit {
   readonly order = this.orderService.order;
 
   readonly steps: TrackStep[] = [
-    {
-      status:      'placed',
-      label:       'Pedido feito',
-      icon:        'receipt_long',
-      description: 'Seu pedido foi recebido pelo restaurante.',
-    },
-    {
-      status:      'preparing',
-      label:       'Em preparo',
-      icon:        'soup_kitchen',
-      description: 'Nossa equipe está preparando seu pedido.',
-    },
-    {
-      status:      'on_the_way',
-      label:       'Saiu pra entrega',
-      icon:        'delivery_dining',
-      description: 'Seu pedido está a caminho!',
-    },
+    { status: 'placed',     label: 'Pedido feito',    icon: 'receipt_long',    description: 'Seu pedido foi recebido pelo restaurante.' },
+    { status: 'preparing',  label: 'Em preparo',       icon: 'soup_kitchen',    description: 'Nossa equipe está preparando seu pedido.' },
+    { status: 'on_the_way', label: 'Saiu pra entrega', icon: 'delivery_dining', description: 'Seu pedido está a caminho!' },
+    { status: 'delivered',  label: 'Entregue',         icon: 'check_circle',    description: 'Pedido entregue. Bom apetite! 🎉' },
   ];
 
-  readonly statusOrder: OrderStatusType[] = ['placed', 'preparing', 'on_the_way'];
+  readonly statusOrder: OrderStatusType[] = ['placed', 'preparing', 'on_the_way', 'delivered'];
 
   readonly paymentLabels: Record<string, string> = {
     pix:  'PIX',

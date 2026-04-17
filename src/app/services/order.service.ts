@@ -1,7 +1,7 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { CartItem } from './cart.service';
 
-export type OrderStatus = 'placed' | 'preparing' | 'on_the_way';
+export type OrderStatus = 'placed' | 'preparing' | 'on_the_way' | 'delivered' | 'cancelled';
 
 export interface OrderAddress {
   street: string;
@@ -59,13 +59,38 @@ const DEMO_ORDERS: Order[] = [
     status: 'on_the_way',
     placedAt: ago(42),
   },
+  {
+    id: '#DEMO0004',
+    items: [
+      { id: 6, name: 'Uramaki Philadelphia', description: '', price: 34.90, imageUrl: 'https://images.unsplash.com/photo-1617196034554-e8895e3f71d8?w=400&q=80', quantity: 1 },
+    ],
+    total: 34.90,
+    address: { street: 'Rua Haddock Lobo', number: '200', complement: '', neighborhood: 'Jardins', city: 'São Paulo' },
+    paymentMethod: 'pix',
+    status: 'delivered',
+    placedAt: ago(90),
+  },
+  {
+    id: '#DEMO0005',
+    items: [
+      { id: 9, name: 'Mochi de Morango', description: '', price: 12.90, imageUrl: '', quantity: 3 },
+    ],
+    total: 38.70,
+    address: { street: 'Alameda Santos', number: '45', complement: '', neighborhood: 'Jardim Paulista', city: 'São Paulo' },
+    paymentMethod: 'cash',
+    status: 'cancelled',
+    placedAt: ago(25),
+  },
 ];
 
-const STATUS_NEXT: Record<OrderStatus, OrderStatus | null> = {
-  placed:     'preparing',
-  preparing:  'on_the_way',
-  on_the_way: null,
+const STATUS_NEXT: Partial<Record<OrderStatus, OrderStatus>> = {
+  placed:    'preparing',
+  preparing: 'on_the_way',
+  on_the_way:'delivered',
 };
+
+/** Status que ainda podem ser cancelados */
+const CANCELLABLE: OrderStatus[] = ['placed', 'preparing', 'on_the_way'];
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -74,7 +99,7 @@ export class OrderService {
   readonly orders    = this._orders.asReadonly();
   readonly lastOrder = computed(() => this._orders().at(-1) ?? null);
 
-  /** Alias mantido para compatibilidade com order-status page */
+  /** Alias mantido para compatibilidade com order-status page do cliente */
   readonly order = this.lastOrder;
 
   place(data: Omit<Order, 'id' | 'status' | 'placedAt'>): Order {
@@ -93,8 +118,18 @@ export class OrderService {
     );
   }
 
-  getByStatus(status: OrderStatus): Order[] {
-    return this._orders().filter(o => o.status === status);
+  cancelOrder(orderId: string): void {
+    this._orders.update(list =>
+      list.map(o =>
+        o.id === orderId && CANCELLABLE.includes(o.status)
+          ? { ...o, status: 'cancelled' }
+          : o
+      )
+    );
+  }
+
+  canCancel(status: OrderStatus): boolean {
+    return CANCELLABLE.includes(status);
   }
 
   private generateId(): string {
