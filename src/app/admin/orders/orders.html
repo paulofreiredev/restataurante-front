@@ -1,0 +1,77 @@
+<app-admin-header></app-admin-header>
+
+<div class="orders-page">
+
+  <!-- Page heading -->
+  <div class="page-heading">
+    <div>
+      <h1 class="page-title">Pedidos</h1>
+      <p class="page-sub">{{ totalOrders() }} pedidos — {{ pendingOrders() }} em aberto</p>
+    </div>
+  </div>
+
+  <!-- Kanban board -->
+  <div class="kanban-board">
+    @for (col of columns; track col.status) {
+      <div class="kanban-col" [class]="'kanban-col ' + col.color">
+
+        <!-- Column header -->
+        <div class="col-header">
+          <mat-icon class="col-icon">{{ col.icon }}</mat-icon>
+          <span class="col-label">{{ col.label }}</span>
+          <span class="col-count">{{ byStatus()[col.status].length }}</span>
+        </div>
+
+        <!-- Order cards -->
+        <div class="col-cards">
+          @for (order of byStatus()[col.status]; track order.id) {
+            <div class="order-card">
+
+              <div class="card-top">
+                <span class="order-id">{{ order.id }}</span>
+                <span class="order-time">{{ order.placedAt | date:'HH:mm' }}</span>
+              </div>
+
+              <div class="card-items">
+                <mat-icon class="items-icon">restaurant</mat-icon>
+                <span>{{ itemsSummary(order) }}</span>
+              </div>
+
+              <div class="card-address">
+                <mat-icon class="addr-icon">location_on</mat-icon>
+                <span>{{ order.address.street }}, {{ order.address.number }}
+                  — {{ order.address.neighborhood }}</span>
+              </div>
+
+              <div class="card-footer">
+                <div class="card-meta">
+                  <span class="card-total">{{ order.total | currency:'BRL':'symbol':'1.2-2' }}</span>
+                  <span class="card-payment">{{ paymentLabel(order.paymentMethod) }}</span>
+                </div>
+
+                @if (col.nextLabel) {
+                  <button mat-flat-button class="advance-btn" (click)="advance(order)">
+                    <mat-icon>{{ col.nextIcon }}</mat-icon>
+                    {{ col.nextLabel }}
+                  </button>
+                } @else {
+                  <span class="delivered-badge">
+                    <mat-icon>check_circle</mat-icon> Entregue
+                  </span>
+                }
+              </div>
+
+            </div>
+          } @empty {
+            <div class="col-empty">
+              <mat-icon>inbox</mat-icon>
+              <p>Nenhum pedido</p>
+            </div>
+          }
+        </div>
+
+      </div>
+    }
+  </div>
+
+</div>

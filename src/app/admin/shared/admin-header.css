@@ -1,0 +1,50 @@
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 64px;
+  background: #1a1a2e;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.header-brand   { display: flex; align-items: center; gap: 12px; }
+.header-logo    { width: 36px; height: 36px; }
+.header-title   { font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: -0.3px; }
+.header-title em { color: #ef9a9a; font-style: normal; }
+
+.header-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-link:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-link.nav-active { background: rgba(255,255,255,0.12); color: white; }
+.nav-link mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+.header-actions { display: flex; align-items: center; gap: 12px; }
+
+.admin-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+}

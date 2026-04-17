@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { AdminAuthService } from '../../services/admin-auth.service';
+import { AdminHeader } from '../shared/admin-header';
 import { Product, ProductService } from '../../services/product.service';
 
 type StatusFilter = 'all' | 'active' | 'inactive';
@@ -18,6 +17,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
 @Component({
   selector: 'app-admin-products',
   imports: [
+    AdminHeader,
     ReactiveFormsModule, DecimalPipe,
     MatButtonModule, MatFormFieldModule, MatInputModule,
     MatSelectModule, MatIconModule, MatSlideToggleModule,
@@ -29,9 +29,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
 })
 export class AdminProducts {
   private productService = inject(ProductService);
-  private auth           = inject(AdminAuthService);
   private fb             = inject(FormBuilder);
-  private router         = inject(Router);
   private snack          = inject(MatSnackBar);
 
   readonly products    = this.productService.products;
@@ -110,10 +108,5 @@ export class AdminProducts {
     this.productService.remove(id);
     this.confirmDeleteId.set(null);
     this.snack.open('🗑️ Prato removido.', '', { duration: 2500 });
-  }
-
-  logout() {
-    this.auth.logout();
-    this.router.navigate(['/admin/login']);
   }
 }
