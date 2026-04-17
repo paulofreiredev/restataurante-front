@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fundo circular vermelho -->
+  <circle cx="32" cy="32" r="32" fill="#d32f2f"/>
+  <!-- Prato -->
+  <ellipse cx="32" cy="38" rx="18" ry="5" fill="none" stroke="white" stroke-width="2.5"/>
+  <ellipse cx="32" cy="33" rx="18" ry="5" fill="none" stroke="white" stroke-width="2.5"/>
+  <path d="M14 33 Q14 18 32 18 Q50 18 50 33" fill="none" stroke="white" stroke-width="2.5"/>
+  <!-- Garfo -->
+  <line x1="12" y1="12" x2="12" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <line x1="10" y1="12" x2="10" y2="19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="12" y1="12" x2="12" y2="19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="14" y1="12" x2="14" y2="19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M10 19 Q12 22 14 19" fill="none" stroke="white" stroke-width="1.5"/>
+  <!-- Faca -->
+  <line x1="52" y1="12" x2="52" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M52 12 Q58 16 56 23 L52 23" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

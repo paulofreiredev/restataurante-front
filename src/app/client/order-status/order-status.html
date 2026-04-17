@@ -1,0 +1,115 @@
+<app-header></app-header>
+
+<div class="status-page">
+  @if (order(); as o) {
+
+    <!-- Confirmação -->
+    <div class="success-banner">
+      <div class="success-icon-wrap">
+        <mat-icon class="success-icon">check_circle</mat-icon>
+      </div>
+      <h1 class="success-title">Pedido confirmado!</h1>
+      <p class="success-sub">Obrigado pela preferência 🍜</p>
+      <div class="order-id-chip">
+        <mat-icon class="chip-icon">tag</mat-icon>
+        <span>Pedido <strong>{{ o.id }}</strong></span>
+      </div>
+      <p class="placed-at">
+        Realizado em {{ o.placedAt | date:'dd/MM/yyyy' }} às {{ o.placedAt | date:'HH:mm' }}
+      </p>
+    </div>
+
+    <!-- Tracker -->
+    <section class="tracker-section">
+      <div class="tracker">
+        @for (step of steps; track step.status; let i = $index; let last = $last) {
+          <div class="track-item" [class.active]="isCompleted(step.status)">
+
+            <div class="track-icon-col">
+              <div class="track-circle" [class.active]="isCompleted(step.status)">
+                <mat-icon>{{ step.icon }}</mat-icon>
+              </div>
+              @if (!last) {
+                <div class="track-line" [class.active]="isCompleted(steps[i + 1].status)"></div>
+              }
+            </div>
+
+            <div class="track-text">
+              <span class="track-label" [class.active]="isCompleted(step.status)">{{ step.label }}</span>
+              <span class="track-desc">{{ step.description }}</span>
+            </div>
+
+          </div>
+        }
+      </div>
+    </section>
+
+    <mat-divider class="page-divider"></mat-divider>
+
+    <!-- Resumo do pedido -->
+    <section class="summary-section">
+      <h2 class="section-title">
+        <mat-icon>receipt_long</mat-icon>
+        Resumo do pedido
+      </h2>
+
+      <div class="item-list">
+        @for (item of o.items; track item.id) {
+          <div class="summary-item">
+            <img [src]="item.imageUrl" [alt]="item.name" class="item-thumb" />
+            <div class="item-info">
+              <span class="item-name">{{ item.name }}</span>
+              <span class="item-qty">{{ item.quantity }}x</span>
+            </div>
+            <span class="item-price">
+              {{ item.price * item.quantity | currency:'BRL':'symbol':'1.2-2' }}
+            </span>
+          </div>
+        }
+      </div>
+
+      <div class="total-row">
+        <span>Total</span>
+        <span class="total-value">{{ o.total | currency:'BRL':'symbol':'1.2-2' }}</span>
+      </div>
+    </section>
+
+    <mat-divider class="page-divider"></mat-divider>
+
+    <!-- Endereço e pagamento -->
+    <section class="details-section">
+
+      <div class="detail-block">
+        <h3 class="detail-title">
+          <mat-icon>location_on</mat-icon>
+          Endereço de entrega
+        </h3>
+        <p class="detail-text">
+          {{ o.address.street }}, {{ o.address.number }}
+          @if (o.address.complement) { — {{ o.address.complement }} }
+        </p>
+        <p class="detail-text">{{ o.address.neighborhood }}, {{ o.address.city }}</p>
+      </div>
+
+      <div class="detail-block">
+        <h3 class="detail-title">
+          <mat-icon>payments</mat-icon>
+          Forma de pagamento
+        </h3>
+        <p class="detail-text">{{ paymentLabels[o.paymentMethod] }}</p>
+        <p class="payment-note">O pagamento será realizado na entrega.</p>
+      </div>
+
+    </section>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" (click)="backToHome()">
+        <mat-icon>home</mat-icon>
+        Voltar ao cardápio
+      </button>
+    </div>
+
+  }
+</div>
+
+<app-footer></app-footer>

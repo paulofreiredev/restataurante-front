@@ -10,10 +10,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Header } from '../../header/header';
 import { Footer } from '../../footer/footer';
 import { CartService } from '../../services/cart.service';
+import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-checkout',
@@ -30,17 +30,16 @@ import { CartService } from '../../services/cart.service';
     MatIconModule,
     MatDividerModule,
     MatRadioModule,
-    MatSnackBarModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })
 export class Checkout {
-  private cart   = inject(CartService);
-  private fb     = inject(FormBuilder);
-  private router = inject(Router);
-  private snack  = inject(MatSnackBar);
+  private cart         = inject(CartService);
+  private orderService = inject(OrderService);
+  private fb           = inject(FormBuilder);
+  private router       = inject(Router);
 
   readonly items   = this.cart.items;
   readonly total   = this.cart.total;
@@ -70,10 +69,19 @@ export class Checkout {
       this.form.markAllAsTouched();
       return;
     }
-    this.snack.open('✅ Pedido realizado com sucesso!', 'OK', {
-      duration: 4000,
-      panelClass: 'snack-success',
+    const f = this.form.value;
+    this.orderService.place({
+      items:   this.items(),
+      total:   this.total(),
+      address: {
+        street:       f.street!,
+        number:       f.number!,
+        complement:   f.complement ?? '',
+        neighborhood: f.neighborhood!,
+        city:         f.city!,
+      },
+      paymentMethod: f.payment!,
     });
-    this.router.navigate(['/client/home']);
+    this.router.navigate(['/client/order-status']);
   }
 }
