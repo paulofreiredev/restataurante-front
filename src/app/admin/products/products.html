@@ -1,0 +1,234 @@
+<!-- Admin Header -->
+<header class="admin-header">
+  <div class="header-brand">
+    <svg viewBox="0 0 64 64" class="header-logo">
+      <circle cx="32" cy="32" r="32" fill="#d32f2f"/>
+      <ellipse cx="32" cy="38" rx="18" ry="5" fill="none" stroke="white" stroke-width="2.5"/>
+      <ellipse cx="32" cy="33" rx="18" ry="5" fill="none" stroke="white" stroke-width="2.5"/>
+      <path d="M14 33 Q14 18 32 18 Q50 18 50 33" fill="none" stroke="white" stroke-width="2.5"/>
+    </svg>
+    <span class="header-title">Restataurante <em>Admin</em></span>
+  </div>
+  <div class="header-actions">
+    <span class="admin-chip"><mat-icon>account_circle</mat-icon> admin</span>
+    <button mat-stroked-button id="btn-logout" (click)="logout()">
+      <mat-icon>logout</mat-icon> Sair
+    </button>
+  </div>
+</header>
+
+<!-- Page layout -->
+<div class="admin-layout" [class.panel-open]="panelOpen()">
+
+  <main class="admin-main">
+
+    <!-- Page heading -->
+    <div class="page-heading">
+      <div>
+        <h1 class="page-title">Cardápio</h1>
+        <p class="page-sub">Gerencie os pratos disponíveis para os clientes</p>
+      </div>
+      <button mat-flat-button color="primary" id="btn-novo-prato" (click)="openAddPanel()">
+        <mat-icon>add</mat-icon> Novo Prato
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <mat-icon class="stat-icon">restaurant_menu</mat-icon>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalProducts() }}</span>
+          <span class="stat-label">Total de pratos</span>
+        </div>
+      </div>
+      <div class="stat-card stat-green">
+        <mat-icon class="stat-icon">check_circle</mat-icon>
+        <div class="stat-info">
+          <span class="stat-value">{{ activeCount() }}</span>
+          <span class="stat-label">Ativos</span>
+        </div>
+      </div>
+      <div class="stat-card stat-gray">
+        <mat-icon class="stat-icon">cancel</mat-icon>
+        <div class="stat-info">
+          <span class="stat-value">{{ inactiveCount() }}</span>
+          <span class="stat-label">Inativos</span>
+        </div>
+      </div>
+      <div class="stat-card stat-blue">
+        <mat-icon class="stat-icon">category</mat-icon>
+        <div class="stat-info">
+          <span class="stat-value">{{ categoriesCount() }}</span>
+          <span class="stat-label">Categorias</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-search">
+        <mat-label>Buscar prato...</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" id="filter-search" />
+        @if (searchQuery()) {
+          <button matSuffix mat-icon-button (click)="searchQuery.set('')"><mat-icon>close</mat-icon></button>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-category">
+        <mat-label>Categoria</mat-label>
+        <mat-select [value]="categoryFilter()" (selectionChange)="categoryFilter.set($event.value)" id="filter-category">
+          <mat-option value="">Todas</mat-option>
+          @for (cat of categories(); track cat) {
+            <mat-option [value]="cat">{{ cat }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-button-toggle-group [value]="statusFilter()" (change)="statusFilter.set($event.value)" id="filter-status">
+        <mat-button-toggle value="all">Todos</mat-button-toggle>
+        <mat-button-toggle value="active">Ativos</mat-button-toggle>
+        <mat-button-toggle value="inactive">Inativos</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th>Prato</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of filteredProducts(); track p.id) {
+            <tr [class.row-inactive]="!p.active">
+              <td class="cell-product">
+                <img [src]="p.imageUrl" [alt]="p.name" class="product-thumb" onerror="this.style.display='none'" />
+                <div class="product-info">
+                  <span class="product-name">{{ p.name }}</span>
+                  <span class="product-desc">{{ p.description }}</span>
+                </div>
+              </td>
+              <td><span class="category-chip">{{ p.category }}</span></td>
+              <td class="cell-price">R$ {{ p.price | number:'1.2-2' }}</td>
+              <td>
+                <mat-slide-toggle [checked]="p.active" (change)="toggleActive(p.id)" color="primary">
+                  {{ p.active ? 'Ativo' : 'Inativo' }}
+                </mat-slide-toggle>
+              </td>
+              <td class="cell-actions">
+                <button mat-icon-button (click)="openEditPanel(p)" title="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                @if (confirmDeleteId() === p.id) {
+                  <button mat-icon-button color="warn" (click)="confirmDelete(p.id)" title="Confirmar exclusão">
+                    <mat-icon>check</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="cancelDelete()" title="Cancelar">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                } @else {
+                  <button mat-icon-button color="warn" (click)="requestDelete(p.id)" title="Excluir">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-row">
+                <mat-icon>search_off</mat-icon>
+                <p>Nenhum prato encontrado com os filtros aplicados</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="results-count">{{ filteredProducts().length }} de {{ totalProducts() }} pratos</p>
+
+  </main>
+
+  <!-- Slide-over panel -->
+  @if (panelOpen()) {
+    <aside class="slide-panel">
+      <div class="panel-header">
+        <h2>{{ editingProduct() ? 'Editar Prato' : 'Novo Prato' }}</h2>
+        <button mat-icon-button (click)="closePanel()"><mat-icon>close</mat-icon></button>
+      </div>
+
+      <form [formGroup]="productForm" (ngSubmit)="saveProduct()" class="panel-form">
+
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>Nome do prato</mat-label>
+          <input matInput formControlName="name" />
+          @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
+            <mat-error>Campo obrigatório</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+          @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
+            <mat-error>Campo obrigatório</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-row-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Preço (R$)</mat-label>
+            <input matInput type="number" step="0.01" formControlName="price" />
+            @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
+              <mat-error>Preço inválido</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Categoria</mat-label>
+            <mat-select formControlName="category">
+              @for (cat of allCategories; track cat) {
+                <mat-option [value]="cat">{{ cat }}</mat-option>
+              }
+            </mat-select>
+            @if (productForm.get('category')?.invalid && productForm.get('category')?.touched) {
+              <mat-error>Obrigatório</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>URL da imagem (opcional)</mat-label>
+          <mat-icon matPrefix>image</mat-icon>
+          <input matInput formControlName="imageUrl" placeholder="https://..." />
+        </mat-form-field>
+
+        @if (imagePreview()) {
+          <div class="img-preview">
+            <img [src]="imagePreview()" alt="Preview" />
+          </div>
+        }
+
+        <mat-slide-toggle formControlName="active" color="primary" class="active-toggle">
+          Prato ativo (visível para clientes)
+        </mat-slide-toggle>
+
+        <div class="panel-actions">
+          <button mat-stroked-button type="button" (click)="closePanel()">Cancelar</button>
+          <button mat-flat-button color="primary" type="submit">
+            <mat-icon>save</mat-icon>
+            {{ editingProduct() ? 'Salvar' : 'Cadastrar' }}
+          </button>
+        </div>
+
+      </form>
+    </aside>
+  }
+
+</div>

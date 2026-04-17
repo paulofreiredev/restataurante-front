@@ -1,0 +1,63 @@
+<div class="login-page">
+  <div class="login-card">
+
+    <div class="login-brand">
+      <div class="brand-icon-wrap">
+        <svg viewBox="0 0 64 64" class="brand-svg">
+          <circle cx="32" cy="32" r="32" fill="#d32f2f"/>
+          <ellipse cx="32" cy="38" rx="18" ry="5" fill="none" stroke="white" stroke-width="2.5"/>
+          <ellipse cx="32" cy="33" rx="18" ry="5" fill="none" stroke="white" stroke-width="2.5"/>
+          <path d="M14 33 Q14 18 32 18 Q50 18 50 33" fill="none" stroke="white" stroke-width="2.5"/>
+          <line x1="12" y1="12" x2="12" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="52" y1="12" x2="52" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M52 12 Q58 16 56 23 L52 23" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="brand-name">Restataurante</h1>
+      <p class="brand-sub">Painel Administrativo</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+
+      <mat-form-field appearance="outline" class="field-full">
+        <mat-label>Usuário</mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput formControlName="username" autocomplete="username" id="admin-username" />
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+          <mat-error>Campo obrigatório</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field-full">
+        <mat-label>Senha</mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input matInput [type]="showPassword() ? 'text' : 'password'"
+               formControlName="password" autocomplete="current-password" id="admin-password" />
+        <button mat-icon-button matSuffix type="button" (click)="showPassword.update(v => !v)">
+          <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <mat-error>Campo obrigatório</mat-error>
+        }
+      </mat-form-field>
+
+      @if (loginError()) {
+        <div class="login-error">
+          <mat-icon>error_outline</mat-icon>
+          Usuário ou senha inválidos
+        </div>
+      }
+
+      <button mat-flat-button color="primary" type="submit" id="btn-login" class="btn-login">
+        Entrar
+      </button>
+
+    </form>
+
+    <div class="login-hint">
+      <mat-icon class="hint-icon">info</mat-icon>
+      <span>Demo: <strong>admin</strong> / <strong>admin123</strong></span>
+    </div>
+
+  </div>
+</div>

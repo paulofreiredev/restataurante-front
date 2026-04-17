@@ -15,5 +15,5 @@ import { ProductService } from '../../services/product.service';
 })
 export class Home {
   private productService = inject(ProductService);
-  readonly products = this.productService.getProducts();
+  readonly products = this.productService.activeProducts;
 }
