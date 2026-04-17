@@ -1,35 +1,66 @@
-.example-card {
-  max-width: 400px;
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 300px);
+  gap: 16px;
+  justify-content: center;
+  /* deixa espaço para o footer */
+  padding-bottom: 80px;
+  min-height: 80vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-.example-header-image {
-  background-image: url('https://material.angular.dev/assets/img/examples/shiba1.jpg');
-  background-size: cover;
-}
-mat-card{
-  height: 100%;
-}
-.menu-grid{
-  display:grid;
-  grid-template-columns:repeat(4,300px);
-  gap:16px;
-  justify-content:center;
-}
-
-@media (max-width:1200px){
-  .menu-grid{
-    grid-template-columns:repeat(3,300px);
+@media (max-width: 1200px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 300px);
   }
 }
 
-@media (max-width:900px){
-  .menu-grid{
-    grid-template-columns:repeat(2,300px);
+@media (max-width: 900px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 300px);
   }
 }
 
-@media (max-width:600px){
-  .menu-grid{
-    grid-template-columns:repeat(1,300px);
+@media (max-width: 600px) {
+  .menu-grid {
+    grid-template-columns: repeat(1, 300px);
   }
+}
+
+/* Botão Concluir — fixo no canto inferior direito */
+.fab-concluir {
+  position: fixed;
+  bottom: 80px; /* fica acima do footer */
+  right: 24px;
+  z-index: 100;
+}
+
+/* Footer */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: #1a1a2e;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 90;
+}
+
+.footer-brand {
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.footer-copy {
+  font-size: 0.78rem;
+  opacity: 0.6;
 }

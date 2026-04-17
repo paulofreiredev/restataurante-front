@@ -1,0 +1,31 @@
+    <mat-card class="example-card" appearance="outlined">
+
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title>{{ name() }}</mat-card-title>
+        <mat-card-subtitle>R$ {{ price() | number:'1.2-2' }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <img mat-card-image [src]="imageUrl()" [alt]="name()">
+
+      <mat-card-content>
+        <p>{{ description() }}</p>
+      </mat-card-content>
+
+      <mat-card-actions class="card-actions">
+        <button mat-button (click)="add()">ADICIONAR</button>
+
+        <span class="quantity-badge" [class.visible]="quantity() > 0">
+          {{ quantity() }}
+        </span>
+
+        <button
+          mat-button
+          class="remove-btn"
+          [disabled]="quantity() === 0"
+          (click)="remove()">
+          REMOVER
+        </button>
+      </mat-card-actions>
+
+    </mat-card>

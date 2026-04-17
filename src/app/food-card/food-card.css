@@ -1,0 +1,52 @@
+.example-card {
+  max-width: 400px;
+}
+
+.example-header-image {
+  background-image: url('https://material.angular.dev/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+mat-card {
+  height: 100%;
+}
+
+/* Actions row */
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Contador de quantidade */
+.quantity-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--mat-sys-primary, #6750a4);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0 6px;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.quantity-badge.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Botão remover — sempre vermelho, desabilitado quando quantity = 0 */
+.remove-btn {
+  color: #e53935 !important;
+}
+
+.remove-btn:disabled {
+  color: rgba(229, 57, 53, 0.38) !important;
+  cursor: not-allowed;
+}

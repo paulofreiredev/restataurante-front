@@ -1,0 +1,135 @@
+<app-header></app-header>
+
+<div class="checkout-container">
+
+  <!-- Coluna esquerda: resumo do pedido -->
+  <section class="order-summary">
+    <h2 class="section-title">
+      <mat-icon>receipt_long</mat-icon>
+      Resumo do Pedido
+    </h2>
+
+    @if (isEmpty()) {
+      <div class="empty-cart">
+        <mat-icon class="empty-icon">shopping_cart_off</mat-icon>
+        <p>Seu carrinho está vazio.</p>
+        <button mat-stroked-button (click)="goBack()">Voltar ao cardápio</button>
+      </div>
+    } @else {
+      <div class="item-list">
+        @for (item of items(); track item.id) {
+          <div class="order-item">
+            <img [src]="item.imageUrl" [alt]="item.name" class="item-thumb" />
+            <div class="item-info">
+              <span class="item-name">{{ item.name }}</span>
+              <span class="item-qty">{{ item.quantity }}x</span>
+            </div>
+            <span class="item-price">
+              {{ item.price * item.quantity | currency:'BRL':'symbol':'1.2-2' }}
+            </span>
+          </div>
+          <mat-divider></mat-divider>
+        }
+      </div>
+
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-value">{{ total() | currency:'BRL':'symbol':'1.2-2' }}</span>
+      </div>
+    }
+  </section>
+
+  <!-- Coluna direita: endereço + pagamento -->
+  @if (!isEmpty()) {
+    <section class="order-form">
+      <form [formGroup]="form" (ngSubmit)="placeOrder()">
+
+        <h2 class="section-title">
+          <mat-icon>location_on</mat-icon>
+          Endereço de Entrega
+        </h2>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="field-grow">
+            <mat-label>Rua / Avenida</mat-label>
+            <input matInput formControlName="street" placeholder="Ex: Av. Paulista" />
+            @if (form.get('street')?.invalid && form.get('street')?.touched) {
+              <mat-error>Campo obrigatório</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="field-number">
+            <mat-label>Número</mat-label>
+            <input matInput formControlName="number" placeholder="123" />
+            @if (form.get('number')?.invalid && form.get('number')?.touched) {
+              <mat-error>Obrigatório</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>Complemento</mat-label>
+          <input matInput formControlName="complement" placeholder="Apto, bloco... (opcional)" />
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="field-grow">
+            <mat-label>Bairro</mat-label>
+            <input matInput formControlName="neighborhood" placeholder="Ex: Centro" />
+            @if (form.get('neighborhood')?.invalid && form.get('neighborhood')?.touched) {
+              <mat-error>Campo obrigatório</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="field-grow">
+            <mat-label>Cidade</mat-label>
+            <input matInput formControlName="city" placeholder="Ex: São Paulo" />
+            @if (form.get('city')?.invalid && form.get('city')?.touched) {
+              <mat-error>Campo obrigatório</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-divider class="section-divider"></mat-divider>
+
+        <h2 class="section-title">
+          <mat-icon>payments</mat-icon>
+          Forma de Pagamento
+        </h2>
+
+        <mat-radio-group formControlName="payment" class="payment-group">
+          @for (method of paymentMethods; track method.value) {
+            <label class="payment-option" [class.selected]="form.get('payment')?.value === method.value">
+              <mat-radio-button [value]="method.value"></mat-radio-button>
+              <mat-icon class="payment-icon">{{ method.icon }}</mat-icon>
+              <span class="payment-label">{{ method.label }}</span>
+            </label>
+          }
+        </mat-radio-group>
+        @if (form.get('payment')?.invalid && form.get('payment')?.touched) {
+          <p class="payment-error">Selecione uma forma de pagamento</p>
+        }
+
+        <p class="payment-notice">
+          <mat-icon class="notice-icon">info</mat-icon>
+          O pagamento será realizado na entrega. Não processamos pagamentos online.
+        </p>
+
+        <div class="actions">
+          <button mat-stroked-button type="button" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Voltar
+          </button>
+          <button mat-flat-button color="primary" type="submit">
+            <mat-icon>check_circle</mat-icon>
+            Confirmar Pedido
+          </button>
+        </div>
+
+      </form>
+    </section>
+  }
+
+</div>
+
+<app-footer></app-footer>
